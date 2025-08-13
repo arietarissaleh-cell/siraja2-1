@@ -1,0 +1,193 @@
+<?php
+
+class Unit_model extends Base_Model {
+
+    function __construct() {
+
+        parent::__construct();
+		$this->set_schema('public');
+		$this->set_table('mst_unit');
+		$this->set_pk('id_unit');
+		// $this->set_log(true);
+    }
+	
+    function count()
+	{
+		$this->db->select('count(tbl.*) as num_rows');
+		if ($this->where)
+		{
+			if (count($this->like)>0)
+			{
+				$like = '( 1=0 ';
+				foreach ($this->like as $key => $value)
+				{
+					$like .= ' OR '.$key." LIKE '%".$value."%'";
+				}
+				$like .= ')';
+				$this->where[$like] = null;
+			}
+			$this->db->where($this->where);
+		}else
+		{
+			$this->db->or_like($this->like);
+		}
+		
+		$query = $this->db->get($this->schema.'.'.$this->table.' tbl');
+		
+		// echo $this->db->last_query();
+		// exit;
+
+		$data = $query->row_array();
+		return $data['num_rows'];
+	}
+	
+	
+	function get_list()
+	{
+		$this->db->select('tbl.*');
+		//$this->db->select('mu.nama_usaha');
+		//$this->db->join('mst_usaha mu','tbl.kode_usaha = mu.kode','left');
+		
+		if ($this->where)
+		{
+			if (count($this->like)>0)
+			{
+				$like = '( 1=0 ';
+				foreach ($this->like as $key => $value)
+				{
+					$like .= ' OR '.$key." LIKE '%".$value."%'";
+				}
+				$like .= ')';
+				$this->where[$like] = null;
+			}
+			$this->db->where($this->where);
+		}else
+		{
+			$this->db->or_like($this->like);
+		}
+		
+		foreach ($this->order_by as $key => $value)
+		{
+			$this->db->order_by($key, $value);
+		}
+
+		if (!$this->limit AND !$this->offset)
+			$query = $this->db->get($this->schema.'.'.$this->table.' tbl');
+		else
+			$query = $this->db->get($this->schema.'.'.$this->table.' tbl',$this->limit,$this->offset);
+		
+		if($query->num_rows()>0)
+		{
+			return $query;
+        
+		}else
+		{
+			$query->free_result();
+            return $query;
+        }
+	}
+	
+	function unit_get_list()
+	{	
+
+		
+		$fid_lokasi_kerja	= $this->session->userdata('fid_lokasi_kerja');
+		$this->db->select('tbl.*');
+		
+		
+		
+		
+		$this->db->order_by("tbl.id_unit", "asc");
+		$this->db->where('tbl.st_viewsurat', 1);
+		if ($fid_lokasi_kerja != 11){
+			$this->db->where('tbl.id_unit', $fid_lokasi_kerja);
+		}else {}
+		
+		
+		foreach ($this->order_by as $key => $value)
+		{
+			$this->db->order_by($key, $value);
+		}
+		
+		if($this->like)
+		$this->db->like($this->like);
+		
+		if($this->where)
+		$this->db->where($this->where);
+		
+
+		//
+		if (!$this->limit AND !$this->offset)
+			$query = $this->db->get($this->schema.'.'.$this->table.' tbl');
+		else
+			$query = $this->db->get($this->schema.'.'.$this->table.' tbl',$this->limit,$this->offset);
+		
+		if($query->num_rows()>0)
+		{
+			return $query;
+        
+		}else
+		{
+			$query->free_result();
+            return $query;
+        }
+	}
+	
+	
+	function get_list_unit()
+	{
+		
+		
+		$this->db->select('tbl.*');
+		
+		
+		if ($this->where)
+		{
+			if (count($this->like)>0)
+			{
+				$like = '( 1=0 ';
+				foreach ($this->like as $key => $value)
+				{
+					$like .= ' OR '.$key." LIKE '%".$value."%'";
+				}
+				$like .= ')';
+				$this->where[$like] = null;
+			}
+			$this->db->where($this->where);
+		}else
+		{
+			$this->db->or_like($this->like);
+		}
+		
+		foreach ($this->order_by as $key => $value)
+		{
+			$this->db->order_by($key, $value);
+		}
+
+		if (!$this->limit AND !$this->offset)
+			$query = $this->db->get($this->schema.'.'.$this->table.' tbl');
+		else
+			$query = $this->db->get($this->schema.'.'.$this->table.' tbl',$this->limit,$this->offset);
+		
+		if($query->num_rows()>0)
+		{
+			return $query;
+        
+		}else
+		{
+			$query->free_result();
+            return $query;
+        }
+	}
+	
+	
+	
+	
+	
+	
+}
+/*
+*Author: Rickytarius
+*Author URL: http://www.bayssl.com
+28052016
+*/
